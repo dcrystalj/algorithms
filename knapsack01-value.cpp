@@ -79,10 +79,11 @@ void solve() {
     vector <LL> dp(sum_values+1, INF);
     dp[0] = 0;
     for (LL i = 0; i < N; i++) {
-        for (LL j = sum_values-v[i]; j >= 0; --j) {
-            REMIN(dp[j + v[i]], w[i] + dp[j])
+        for(LL j = sum_values; j >= v[i]; j--){
+            REMIN(dp[j], dp[j - v[i]] + w[i]);
         }
     }
+
     
     LL res = 0;
     for (LL i = 0; i <= sum_values; i++) {

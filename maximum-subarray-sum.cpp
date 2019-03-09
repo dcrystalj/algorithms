@@ -1,24 +1,4 @@
-
-#include <stdio.h>
-#include <iostream>
-#include <tuple>
-#include <queue>
-#include <algorithm>
-#include <string>
-#include <fstream>
-#include <math.h>
-#include <iomanip>
-#include <time.h>
-#include <assert.h>
-#include <stack>
-#include <deque>
 #include <bits/stdc++.h>
-#include <array>
-#include <unordered_set>
-#include <unordered_map>
-#include <bitset>
-#include <sstream>  // istringstream buffer(myString);
-// #include <boost/functional/hash.hpp>
 
 using namespace std;
 
@@ -66,34 +46,35 @@ string removeZeros(string str) { return str.erase(0, min(str.find_first_not_of('
 #define ddvv(vec) for(auto& i:vec) { for(auto& j:i) { cout <<  j << " "; }; cout << endl };
 
 void solve() {
-    READ_INT(N);
-    READ_INT(W);
-    vector<LL> w(N);
-    vector<LL> v(N);
-    for (LL i = 0; i < N; i++) {
-        cin >> w[i] >> v[i];
-    }
-    
-    vector <LL> dp(W+1);
-    for (LL i = 0; i < N; i++) {
-        // if repetitions are allowed gor from 0 to W-w[i]
-        for (LL j = W-w[i]; j >= 0; --j) {
-            REMAX(dp[j + w[i]], v[i] + dp[j])
+    LL n = 0, sum = 0, best = 0, in = 0;
+    pair<LL, LL> p = {0, 0};
+    cin >> n;
+    // only sum
+    // for (LL i = 0; i < n; i++) {
+    //     cin >> in;
+    //     sum = max(sum+in, in);
+    //     best = max(sum, best);
+    // }
+    // cout << best << endl;
+    //
+    // sum with index from to
+    for (LL i = 0; i < n; i++) {
+        cin >> in;
+        if (in >= sum + in) {
+            sum = in;
+            if (sum >= best) {
+                p = {i, i};
+                best = sum;
+            }
+        } else {
+            sum += in;
+            if (sum >= best) {
+                best = sum;
+                p = {p.first, i};
+            }
         }
     }
-
-    dp[0] = 0;
-    for (LL i = 0; i < N; i++) {
-        for(LL j = W; j >= w[i]; j--){
-            REMAX(dp[j], dp[j - w[i]] + v[i]);
-        }
-    }
-
-    LL result = 0;
-    for (LL i = 0; i <= W; i++) {
-        REMAX(result, dp[i]);
-    }
-    cout << result;
+    cout << best << " " << p.first << " " << p.second << endl;
 }
 
 

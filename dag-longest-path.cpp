@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <iostream>
 #include <tuple>
@@ -46,6 +45,10 @@ string removeZeros(string str) { return str.erase(0, min(str.find_first_not_of('
 #define int2bin(i) removeZeros(bitset< 1001 >( i ).to_string())
 // str.erase(0, min(str.find_first_not_of('0'), str.size()-1)); // remove leading zeros
 
+void reverseStr(string& str) { 
+    int n = str.length(); 
+    for (int i = 0; i < n / 2; i++) swap(str[i], str[n - i - 1]); 
+} 
 
 // works for unordered_set, unordered_map..
 #define HMAP unordered_map
@@ -66,34 +69,45 @@ string removeZeros(string str) { return str.erase(0, min(str.find_first_not_of('
 #define ddvv(vec) for(auto& i:vec) { for(auto& j:i) { cout <<  j << " "; }; cout << endl };
 
 void solve() {
+    LL x,y;
     READ_INT(N);
-    READ_INT(W);
-    vector<LL> w(N);
-    vector<LL> v(N);
-    for (LL i = 0; i < N; i++) {
-        cin >> w[i] >> v[i];
+    READ_INT(M);
+    vector<LL> v[N+1];
+    vector<LL> inDegree (N+1);
+    vector<LL> maxPrice (N+1);
+    for (LL i = 0; i < M; i++) {
+        cin >> x >> y;
+        v[x].push_back(y);
+        ++inDegree[y];
     }
-    
-    vector <LL> dp(W+1);
-    for (LL i = 0; i < N; i++) {
-        // if repetitions are allowed gor from 0 to W-w[i]
-        for (LL j = W-w[i]; j >= 0; --j) {
-            REMAX(dp[j + w[i]], v[i] + dp[j])
+
+    deque<LL> q;
+
+    // add zero degree vertex
+    for (LL i = 1; i <= N; i++) {
+        if (inDegree[i] == 0) {
+            q.push_back(i);
         }
     }
 
-    dp[0] = 0;
-    for (LL i = 0; i < N; i++) {
-        for(LL j = W; j >= w[i]; j--){
-            REMAX(dp[j], dp[j - w[i]] + v[i]);
+    while (!q.empty()) {
+        LL head = q.front();
+        q.pop_front();
+
+        FOREACH(v[head], neighbor) {
+            REMAX(maxPrice[*neighbor], maxPrice[head] + 1)
+            inDegree[*neighbor]--;
+            if (inDegree[*neighbor] == 0) {
+                q.push_back(*neighbor);
+            }
         }
     }
 
-    LL result = 0;
-    for (LL i = 0; i <= W; i++) {
-        REMAX(result, dp[i]);
+    LL res = 0;
+    for (LL i = 0; i <= N; i++) {
+        REMAX(res, maxPrice[i]);
     }
-    cout << result;
+    cout << res << endl;
 }
 
 
